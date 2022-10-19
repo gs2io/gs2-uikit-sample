@@ -1,0 +1,22 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    FriendNamespaceName: sample-friend
+    LogNamespaceName: sample-log
+
+Resources:
+  Namespace:
+    Type: GS2::Friend::Namespace
+    Properties:
+      Name: ${FriendNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}

@@ -1,0 +1,42 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    GatewayNamespaceName: sample-chat
+    ChatNamespaceName: sample-chat
+    LogNamespaceName: sample-log
+
+Resources:
+  GatewayNamespace:
+    Type: GS2::Gateway::Namespace
+    Properties:
+      Name: ${GatewayNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  Namespace:
+    Type: GS2::Chat::Namespace
+    Properties:
+      Name: ${ChatNamespaceName}
+      AllowCreateRoom: true
+      PostNotification:
+        GatewayNamespaceId: !GetAttr GatewayNamespace.Item.NamespaceId
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+    DependsOn:
+      - GatewayNamespace

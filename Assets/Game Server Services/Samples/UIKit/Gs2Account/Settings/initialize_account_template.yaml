@@ -1,0 +1,51 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2-Account initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    AccountNamespaceName: sample-account
+    KeyNamespaceAccountAuthentication: sample-account-key
+    KeyAccountAuthentication: key
+    LogNamespaceName: sample-log
+
+Resources:
+  KeyNamespaceAccountAuthentication:
+    Type: GS2::Key::Namespace
+    Properties:
+      Name: ${KeyNamespaceAccountAuthentication}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  KeyAccountAuthentication:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceAccountAuthentication}
+      Name: ${KeyAccountAuthentication}
+    DependsOn:
+      - KeyNamespaceAccountAuthentication
+
+  AccountNamespace:
+    Type: GS2::Account::Namespace
+    Properties:
+      Name: ${AccountNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+Outputs:
+  AccountNamespaceName: !GetAttr AccountNamespace.Item.Name
+  KeyNamespaceName: !GetAttr KeyNamespaceAccountAuthentication.Item.Name
+  KeyName: !GetAttr KeyAccountAuthentication.Item.Name

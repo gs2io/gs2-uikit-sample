@@ -1,0 +1,102 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    StaminaNamespaceName: sample-stamina
+    StaminaName: stamina
+    ExchangeNamespaceName: sample-stamina
+    ExchangeRateName: recover-stamina
+    KeyNamespaceName: sample-stamina
+    KeyName: exchange-key
+    LogNamespaceName: sample-log
+
+Resources:
+  Namespace:
+    Type: GS2::Stamina::Namespace
+    Properties:
+      Name: ${StaminaNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  StaminaSettings:
+    Type: GS2::Stamina::CurrentStaminaMaster
+    Properties:
+      NamespaceName: ${StaminaNamespaceName}
+      Settings:
+        version: 2019-02-14
+        staminaModels:
+          - name: ${StaminaName}
+            metadata: STAMINA
+            recoverIntervalMinutes: 1
+            recoverValue: 1
+            initialCapacity: 50
+            isOverflow: true
+            maxCapacity: 999
+    DependsOn:
+      - Namespace
+
+  ExchangeKeyNamespace:
+    Type: GS2::Key::Namespace
+    Properties:
+      Name: ${KeyNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  ExchangeKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${KeyName}
+    DependsOn:
+      - ExchangeKeyNamespace
+
+  ExchangeNamespace:
+    Type: GS2::Exchange::Namespace
+    Properties:
+      Name: ${ExchangeNamespaceName}
+      KeyId: !GetAttr ExchangeKey.Item.KeyId
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+    DependsOn:
+      - ExchangeKey
+
+  ExchangeSettings:
+    Type: GS2::Exchange::CurrentRateMaster
+    Properties:
+      NamespaceName: ${ExchangeNamespaceName}
+      Settings:
+        version: 2019-08-19
+        rateModels:
+          - name: ${ExchangeRateName}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Stamina:RecoverStaminaByUserId
+                request:
+                  namespaceName: ${StaminaNamespaceName}
+                  staminaName: ${StaminaName}
+                  userId: "#{userId}"
+                  recoverValue: 10
+    DependsOn:
+      - ExchangeNamespace

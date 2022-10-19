@@ -1,0 +1,80 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    ShowcaseNamespaceName: sample-showcase
+    KeyNamespaceName: sample-showcase-key
+    KeyName: key
+    LogNamespaceName: sample-log
+
+Resources:
+  ShowcaseKeyNamespace:
+    Type: GS2::Key::Namespace
+    Properties:
+      Name: ${KeyNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  ShowcaseKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${KeyName}
+    DependsOn:
+      - ShowcaseKeyNamespace
+
+  Namespace:
+    Type: GS2::Showcase::Namespace
+    Properties:
+      Name: ${ShowcaseNamespaceName}
+      KeyId: !GetAttr ShowcaseKey.Item.KeyId
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+    DependsOn:
+      - ShowcaseKey
+
+  ShowcaseSettings:
+    Type: GS2::Showcase::CurrentShowcaseMaster
+    Properties:
+      NamespaceName: ${ShowcaseNamespaceName}
+      Settings:
+        version: 2019-04-04
+        showcases:
+          - name: showcase
+            metadata: SHOWCASE
+            displayItems:
+              - type: salesItem
+                salesItem:
+                  name: sales-item-0001
+                  metadata: SALES_ITEM_0001
+                  consumeActions: []
+                  acquireActions: []
+              - type: salesItem
+                salesItem:
+                  name: sales-item-0002
+                  metadata: SALES_ITEM_0002
+                  consumeActions: []
+                  acquireActions: []
+              - type: salesItem
+                salesItem:
+                  name: sales-item-0003
+                  metadata: SALES_ITEM_0003
+                  consumeActions: []
+                  acquireActions: []
+    DependsOn:
+      - Namespace

@@ -1,0 +1,29 @@
+{
+    "name": "Gs2.Sample.UIKit.Gs2Account.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:09ef5922e2d77498aa246abd9073d05f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.lupidan.apple-signin-unity",
+            "expression": "",
+            "define": "ENABLE_SIGN_IN_WITH_APPLE"
+        },
+        {
+            "name": "com.cysharp.unitask",
+            "expression": "",
+            "define": "GS2_ENABLE_UNITASK"
+        }
+    ],
+    "noEngineReferences": false
+}

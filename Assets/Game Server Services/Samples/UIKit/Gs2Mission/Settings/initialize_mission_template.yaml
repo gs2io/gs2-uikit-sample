@@ -1,0 +1,170 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    MissionNamespaceName: sample-mission
+    KeyNamespaceName: sample-mission
+    QueueName: sample-mission
+    KeyName: key
+    ExchangeNamespaceName: sample-mission
+    ExchangeRateNameCountUpCounter1: count-up-1
+    ExchangeRateNameCountUpCounter2: count-up-2
+    ExchangeKeyName: exchange-key
+    LogNamespaceName: sample-log
+
+Resources:
+  MissionKeyNamespace:
+    Type: GS2::Key::Namespace
+    Properties:
+      Name: ${KeyNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  MissionKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${KeyName}
+    DependsOn:
+      - MissionKeyNamespace
+
+  MissionJobQueue:
+    Type: GS2::JobQueue::Namespace
+    Properties:
+      Name: ${QueueName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  Mission:
+    Type: GS2::Mission::Namespace
+    Properties:
+      Name: ${MissionNamespaceName}
+      KeyId: !GetAttr MissionKey.Item.KeyId
+      QueueNamespaceId: !GetAttr MissionJobQueue.Item.NamespaceId
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+    DependsOn:
+      - MissionKey
+      - MissionJobQueue
+
+  MissionSettings:
+    Type: GS2::Mission::CurrentMissionMaster
+    Properties:
+      NamespaceName: ${MissionNamespaceName}
+      Settings:
+        version: 2019-05-28
+        groups:
+          - name: group1
+            metadata: DAILY
+            resetType: daily
+            resetHour: 15
+            tasks:
+              - name: task1-1
+                counterName: counter1
+                targetValue: 1
+                completeAcquireActions: []
+              - name: task1-2
+                counterName: counter1
+                targetValue: 3
+                completeAcquireActions: []
+                premiseMissionTaskName: task1-1
+              - name: task1-3
+                counterName: counter1
+                targetValue: 10
+                completeAcquireActions: []
+                premiseMissionTaskName: task1-2
+          - name: group2
+            metadata: WEEKLY
+            resetType: weekly
+            resetDayOfWeek: sunday
+            resetHour: 15
+            tasks:
+              - name: task2-1
+                counterName: counter1
+                targetValue: 10
+                completeAcquireActions: []
+              - name: task2-2
+                counterName: counter2
+                targetValue: 3
+                completeAcquireActions: []
+        counters:
+          - name: counter1
+            scopes:
+              - resetType: daily
+                resetHour: 15
+              - resetType: weekly
+                resetDayOfWeek: sunday
+                resetHour: 15
+          - name: counter2
+            scopes:
+              - resetType: weekly
+                resetDayOfWeek: sunday
+                resetHour: 15
+    DependsOn:
+      - Mission
+
+  ExchangeKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${ExchangeKeyName}
+    DependsOn:
+      - MissionKeyNamespace
+
+  ExchangeNamespace:
+    Type: GS2::Exchange::Namespace
+    Properties:
+      Name: ${ExchangeNamespaceName}
+      KeyId: !GetAttr ExchangeKey.Item.KeyId
+    DependsOn:
+      - ExchangeKey
+
+  ExchangeSettings:
+    Type: GS2::Exchange::CurrentRateMaster
+    Properties:
+      NamespaceName: ${ExchangeNamespaceName}
+      Settings:
+        version: 2019-08-19
+        rateModels:
+          - name: ${ExchangeRateNameCountUpCounter1}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Mission:IncreaseCounterByUserId
+                request:
+                  namespaceName: ${MissionNamespaceName}
+                  counterName: counter1
+                  userId: "#{userId}"
+                  value: 1
+          - name: ${ExchangeRateNameCountUpCounter2}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Mission:IncreaseCounterByUserId
+                request:
+                  namespaceName: ${MissionNamespaceName}
+                  counterName: counter2
+                  userId: "#{userId}"
+                  value: 1
+    DependsOn:
+      - ExchangeNamespace

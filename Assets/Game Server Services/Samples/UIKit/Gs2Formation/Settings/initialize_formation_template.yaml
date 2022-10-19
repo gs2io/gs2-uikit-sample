@@ -1,0 +1,211 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    FormationNamespaceName: sample-formation
+    DictionaryNamespaceName: sample-formation
+    KeyNamespaceName: sample-formation
+    ExchangeNamespaceName: sample-formation
+    ExchangeAddCapacity: add_capacity
+    ExchangeRateNameEye1: eye1
+    ExchangeRateNameEye2: eye2
+    ExchangeRateNameEye3: eye3
+    ExchangeRateNameMouth1: mouth1
+    ExchangeRateNameMouth2: mouth2
+    ExchangeRateNameMouth3: mouth3
+    ExchangeKeyName: exchange-key
+    DictionarySignatureKeyName: dictionary-key
+    LogNamespaceName: sample-log
+
+Resources:
+  Namespace:
+    Type: GS2::Formation::Namespace
+    Properties:
+      Name: ${FormationNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  NamespaceSettings:
+    Type: GS2::Formation::CurrentFormMaster
+    Properties:
+      NamespaceName: ${FormationNamespaceName}
+      Settings:
+        version: 2019-09-09
+        moldModels:
+          - name: avatar
+            metadata: AVATAR
+            formModel:
+              name: avatar
+              slots:
+                - name: eye
+                  propertyRegex: grn:*
+                - name: mouth
+                  propertyRegex: grn:*
+            initialMaxCapacity: 3
+            maxCapacity: 5
+    DependsOn:
+      - Namespace
+
+  DictionaryNamespace:
+    Type: GS2::Dictionary::Namespace
+    Properties:
+      Name: ${DictionaryNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  DictionaryNamespaceSettings:
+    Type: GS2::Dictionary::CurrentEntryMaster
+    Properties:
+      NamespaceName: ${DictionaryNamespaceName}
+      Settings:
+        version: 2020-04-30
+        entryModels:
+          - name: eye1
+            metadata: EYE1
+          - name: eye2
+            metadata: EYE2
+          - name: eye3
+            metadata: EYE3
+          - name: mouth1
+            metadata: MOUTH1
+          - name: mouth2
+            metadata: MOUTH2
+          - name: mouth3
+            metadata: MOUTH3
+    DependsOn:
+      - DictionaryNamespace
+
+  DictionaryKeyNamespace:
+    Type: GS2::Key::Namespace
+    Properties:
+      Name: ${KeyNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  ExchangeKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${ExchangeKeyName}
+    DependsOn:
+      - DictionaryKeyNamespace
+
+  DictionarySignatureKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${DictionarySignatureKeyName}
+    DependsOn:
+      - DictionaryKeyNamespace
+
+  ExchangeNamespace:
+    Type: GS2::Exchange::Namespace
+    Properties:
+      Name: ${ExchangeNamespaceName}
+      KeyId: !GetAttr ExchangeKey.Item.KeyId
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+    DependsOn:
+      - ExchangeKey
+
+  ExchangeSettings:
+    Type: GS2::Exchange::CurrentRateMaster
+    Properties:
+      NamespaceName: ${ExchangeNamespaceName}
+      Settings:
+        version: 2019-08-19
+        rateModels:
+          - name: ${ExchangeRateNameEye1}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - eye1
+          - name: ${ExchangeRateNameEye2}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - eye2
+          - name: ${ExchangeRateNameEye3}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - eye3
+          - name: ${ExchangeRateNameMouth1}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - mouth1
+          - name: ${ExchangeRateNameMouth2}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - mouth2
+          - name: ${ExchangeRateNameMouth3}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - mouth3
+          - name: ${ExchangeAddCapacity}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Formation:AddMoldCapacityByUserId
+                request:
+                  namespaceName: ${FormationNamespaceName}
+                  moldName: avatar
+                  userId: "#{userId}"
+                  capacity: 1
+    DependsOn:
+      - ExchangeNamespace

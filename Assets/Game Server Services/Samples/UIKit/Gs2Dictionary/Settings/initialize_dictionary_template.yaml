@@ -1,0 +1,120 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    DictionaryNamespaceName: sample-dictionary
+    KeyNamespaceName: sample-dictionary
+    ExchangeNamespaceName: sample-dictionary
+    ExchangeRateNameMonster1: monster-0001
+    ExchangeRateNameMonster2: monster-0002
+    ExchangeRateNameMonster3: monster-0003
+    ExchangeKeyName: exchange-key
+    LogNamespaceName: sample-log
+
+Resources:
+  Namespace:
+    Type: GS2::Dictionary::Namespace
+    Properties:
+      Name: ${DictionaryNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  NamespaceSettings:
+    Type: GS2::Dictionary::CurrentEntryMaster
+    Properties:
+      NamespaceName: ${DictionaryNamespaceName}
+      Settings:
+        version: 2020-04-30
+        entryModels:
+          - name: monster-0001
+            metadata: MONSTER-0001
+          - name: monster-0002
+            metadata: MONSTER-0002
+          - name: monster-0003
+            metadata: MONSTER-0003
+    DependsOn:
+      - Namespace
+
+  DictionaryKeyNamespace:
+    Type: GS2::Key::Namespace
+    Properties:
+      Name: ${KeyNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  ExchangeKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${ExchangeKeyName}
+    DependsOn:
+      - DictionaryKeyNamespace
+
+  ExchangeNamespace:
+    Type: GS2::Exchange::Namespace
+    Properties:
+      Name: ${ExchangeNamespaceName}
+      KeyId: !GetAttr ExchangeKey.Item.KeyId
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+    DependsOn:
+      - ExchangeKey
+
+  ExchangeSettings:
+    Type: GS2::Exchange::CurrentRateMaster
+    Properties:
+      NamespaceName: ${ExchangeNamespaceName}
+      Settings:
+        version: 2019-08-19
+        rateModels:
+          - name: ${ExchangeRateNameMonster1}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - monster-0001
+          - name: ${ExchangeRateNameMonster2}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - monster-0002
+          - name: ${ExchangeRateNameMonster3}
+            consumeActions: []
+            acquireActions:
+              - action: Gs2Dictionary:AddEntriesByUserId
+                request:
+                  namespaceName: ${DictionaryNamespaceName}
+                  userId: "#{userId}"
+                  entryModelNames:
+                    - monster-0003
+    DependsOn:
+      - ExchangeNamespace

@@ -1,0 +1,84 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    ExchangeNamespaceName: sample-exchange
+    KeyNamespaceName: sample-exchange
+    ExchangeKeyName: key
+    JobQueueNamespaceName: sample-exchange
+    LogNamespaceName: sample-log
+
+Resources:
+  ExchangeKeyNamespace:
+    Type: GS2::Key::Namespace
+    Properties:
+      Name: ${KeyNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  ExchangeKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${ExchangeKeyName}
+    DependsOn:
+      - ExchangeKeyNamespace
+
+  ExchangeJobQueue:
+    Type: GS2::JobQueue::Namespace
+    Properties:
+      Name: ${JobQueueNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  Namespace:
+    Type: GS2::Exchange::Namespace
+    Properties:
+      Name: ${ExchangeNamespaceName}
+      EnableDirectExchange: false
+      EnableAwaitExchange: true
+      KeyId: !GetAttr ExchangeKey.Item.KeyId
+      QueueNamespaceId: !GetAttr ExchangeJobQueue.Item.NamespaceId
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+    DependsOn:
+      - ExchangeKey
+      - ExchangeJobQueue
+
+  ExchangeSettings:
+    Type: GS2::Exchange::CurrentRateMaster
+    Properties:
+      NamespaceName: ${ExchangeNamespaceName}
+      Settings:
+        version: 2019-08-19
+        rateModels:
+          - name: treasure
+            timingType: await
+            lockTime: 3
+            enableSkip: true
+            consumeActions: []
+            acquireActions: []
+    DependsOn:
+      - Namespace

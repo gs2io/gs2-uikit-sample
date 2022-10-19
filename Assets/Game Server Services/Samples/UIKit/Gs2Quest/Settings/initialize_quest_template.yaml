@@ -1,0 +1,99 @@
+GS2TemplateFormatVersion: "2019-05-01"
+Description: GS2 SDK for Unity initialize template Version 2010-06-26
+
+Globals:
+  Alias:
+    QuestNamespaceName: sample-quest
+    KeyNamespaceName: sample-quest
+    KeyName: key
+    LogNamespaceName: sample-log
+
+Resources:
+  QuestKeyNamespace:
+    Type: GS2::Key::Namespace
+    Properties:
+      Name: ${KeyNamespaceName}
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+
+  QuestKey:
+    Type: GS2::Key::Key
+    Properties:
+      NamespaceName: ${KeyNamespaceName}
+      Name: ${KeyName}
+    DependsOn:
+      - QuestKeyNamespace
+
+  Namespace:
+    Type: GS2::Quest::Namespace
+    Properties:
+      Name: ${QuestNamespaceName}
+      KeyId: !GetAttr QuestKey.Item.KeyId
+      LogSetting:
+        LoggingNamespaceId: !Join
+          - ':'
+          - - grn
+            - gs2
+            - !GetAttr Gs2::Region
+            - !GetAttr Gs2::OwnerId
+            - log
+            - ${LogNamespaceName}
+    DependsOn:
+      - QuestKey
+
+  QuestSettings:
+    Type: GS2::Quest::CurrentQuestMaster
+    Properties:
+      NamespaceName: ${QuestNamespaceName}
+      Settings:
+        version: 2019-05-14
+        groups:
+          - name: group1
+            quests:
+              - name: quest1-1
+                contents:
+                  - completeAcquireActions: []
+                    weight: 1
+                consumeActions: []
+                failedAcquireActions: []
+              - name: quest1-2
+                contents:
+                  - completeAcquireActions: []
+                    weight: 1
+                consumeActions: []
+                failedAcquireActions: []
+                premiseQuestNames:
+                  - quest1-1
+              - name: quest1-3
+                contents:
+                  - completeAcquireActions: []
+                    weight: 1
+                consumeActions: []
+                failedAcquireActions: []
+                premiseQuestNames:
+                  - quest1-2
+          - name: group2
+            quests:
+              - name: quest2-1
+                contents:
+                  - completeAcquireActions: []
+                    weight: 1
+                consumeActions: []
+                failedAcquireActions: []
+              - name: quest2-2
+                contents:
+                  - completeAcquireActions: []
+                    weight: 1
+                consumeActions: []
+                failedAcquireActions: []
+                premiseQuestNames:
+                  - quest2-1
+    DependsOn:
+      - Namespace
