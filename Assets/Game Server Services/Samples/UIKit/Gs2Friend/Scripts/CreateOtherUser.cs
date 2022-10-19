@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
+using Gs2.Core.Exception;
 using Gs2.Unity.Gs2Friend.ScriptableObject;
-using Gs2.Unity.UiKit.Core;
+using Gs2.Unity.Util;
 using UnityEngine;
 using UnityEngine.Events;
+using Gs2ClientHolder = Gs2.Unity.Util.Gs2ClientHolder;
 
 namespace Gs2.Unity.UiKit.Sample.Gs2Friend
 {
@@ -15,7 +17,7 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Friend
         public Gs2.Unity.Gs2Key.ScriptableObject.Key accountKey;
 
         public OtherPlayer otherPlayerPrefab;
-        public Transform populateNode;
+        public RectTransform populateNode;
         
         private Gs2ClientHolder _clientHolder;
 
@@ -90,7 +92,7 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Friend
         [SerializeField]
         internal ErrorEvent onError = new ErrorEvent();
         
-        public event UnityAction<Exception, Func<IEnumerator>> OnError
+        public event UnityAction<Gs2Exception, Func<IEnumerator>> OnError
         {
             add => onError.AddListener(value);
             remove => onError.RemoveListener(value);

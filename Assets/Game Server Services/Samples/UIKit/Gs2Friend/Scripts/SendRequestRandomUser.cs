@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
-using Gs2.Unity.UiKit.Core;
+using Gs2.Core.Exception;
 using Gs2.Unity.UiKit.Gs2Friend;
+using Gs2.Unity.Util;
 using UnityEngine;
 using UnityEngine.Events;
+using Gs2ClientHolder = Gs2.Unity.Util.Gs2ClientHolder;
 
 namespace Gs2.Unity.UiKit.Sample.Gs2Friend
 {
@@ -70,7 +72,7 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Friend
         [SerializeField]
         internal ErrorEvent onError = new ErrorEvent();
         
-        public event UnityAction<Exception, Func<IEnumerator>> OnError
+        public event UnityAction<Gs2Exception, Func<IEnumerator>> OnError
         {
             add => onError.AddListener(value);
             remove => onError.RemoveListener(value);

@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
 using System.Linq;
-using Gs2.Unity.UiKit.Core;
+using Gs2.Core.Exception;
 using Gs2.Unity.UiKit.Gs2Inbox.Fetcher;
+using Gs2.Unity.Util;
 using UnityEngine;
 using UnityEngine.Events;
+using Gs2ClientHolder = Gs2.Unity.Util.Gs2ClientHolder;
+using Gs2GameSessionHolder = Gs2.Unity.Util.Gs2GameSessionHolder;
 
 namespace Gs2.Unity.UiKit.Sample.Gs2Inbox
 {
@@ -88,7 +91,7 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Inbox
         [SerializeField]
         internal ErrorEvent onError = new ErrorEvent();
         
-        public event UnityAction<Exception, Func<IEnumerator>> OnError
+        public event UnityAction<Gs2Exception, Func<IEnumerator>> OnError
         {
             add => onError.AddListener(value);
             remove => onError.RemoveListener(value);

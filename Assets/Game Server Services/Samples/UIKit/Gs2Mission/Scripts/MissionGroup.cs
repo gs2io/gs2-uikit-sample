@@ -17,10 +17,11 @@
 
 using System;
 using System.Collections;
+using Gs2.Core.Exception;
 using Gs2.Unity.Gs2Mission.Model;
 using Gs2.Unity.Gs2Mission.ScriptableObject;
-using Gs2.Unity.UiKit.Core;
 using Gs2.Unity.UiKit.Gs2Mission.Fetcher;
+using Gs2.Unity.Util;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -100,7 +101,7 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Mission
         [SerializeField]
         private ErrorEvent onError = new ErrorEvent();
         
-        public event UnityAction<Exception, Func<IEnumerator>> OnError
+        public event UnityAction<Gs2Exception, Func<IEnumerator>> OnError
         {
             add => onError.AddListener(value);
             remove => onError.RemoveListener(value);

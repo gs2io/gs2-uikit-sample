@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "50a67d8f419b6cea0398eff6c19cf0bbe11ed609"
+      "hash": "ee54559532c5388fc666f71f07800fbf69cbded7"
     },
     "com.lupidan.apple-signin-unity": {
       "version": "https://github.com/lupidan/apple-signin-unity.git#v1.4.2",
@@ -76,7 +76,7 @@
       "dependencies": {}
     },
     "com.unity.collab-proxy": {
-      "version": "1.15.16",
+      "version": "1.17.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -92,7 +92,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.14",
+      "version": "3.0.15",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -101,7 +101,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.14",
+      "version": "2.0.16",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -162,29 +162,32 @@
       }
     },
     "io.gs2.csharp.sdk": {
-      "version": "file:D:\\Workspace_SDK\\gs2-sdk\\csharp\\Assets\\Scripts\\Runtime\\Sdk\\Gs2",
+      "version": "2022.10.5",
       "depth": 0,
-      "source": "local",
+      "source": "registry",
       "dependencies": {
         "com.unity.modules.unitywebrequest": "1.0.0"
-      }
+      },
+      "url": "https://upm.gs2.io/npm"
     },
     "io.gs2.unity.sdk": {
-      "version": "file:D:\\Workspace_SDK\\gs2-sdk\\unity\\Assets\\Scripts\\Runtime\\Sdk\\Gs2\\Unity",
+      "version": "2022.10.2",
       "depth": 0,
-      "source": "local",
+      "source": "registry",
       "dependencies": {
-        "io.gs2.csharp.sdk": "2022.3.3"
-      }
+        "io.gs2.csharp.sdk": "2022.9.2"
+      },
+      "url": "https://upm.gs2.io/npm"
     },
     "io.gs2.unity.sdk.uikit": {
-      "version": "file:D:\\Workspace_SDK\\gs2-sdk\\unity\\Assets\\Scripts\\Runtime\\Sdk\\Gs2\\UiKit",
+      "version": "2022.9.5",
       "depth": 0,
-      "source": "local",
+      "source": "registry",
       "dependencies": {
         "com.unity.ugui": "1.0.0",
         "io.gs2.unity.sdk": "2022.2.6"
-      }
+      },
+      "url": "https://upm.gs2.io/npm"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

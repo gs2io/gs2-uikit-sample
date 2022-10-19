@@ -19,14 +19,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Gs2.Core.Exception;
 using Gs2.Unity.Gs2Formation.Model;
 using Gs2.Unity.Gs2Formation.ScriptableObject;
 using Gs2.Unity.Gs2Key.ScriptableObject;
-using Gs2.Unity.UiKit.Core;
 using Gs2.Unity.UiKit.Gs2Formation.Fetcher;
+using Gs2.Unity.Util;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Gs2ClientHolder = Gs2.Unity.Util.Gs2ClientHolder;
+using Gs2GameSessionHolder = Gs2.Unity.Util.Gs2GameSessionHolder;
 
 namespace Gs2.Unity.UiKit.Sample.Gs2Formation
 {
@@ -166,7 +169,7 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Formation
         [SerializeField]
         private ErrorEvent onError = new ErrorEvent();
         
-        public event UnityAction<Exception, Func<IEnumerator>> OnError
+        public event UnityAction<Gs2Exception, Func<IEnumerator>> OnError
         {
             add => onError.AddListener(value);
             remove => onError.RemoveListener(value);

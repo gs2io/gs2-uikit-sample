@@ -5,10 +5,9 @@ using Gs2.Core.Net;
 using Gs2.Unity.Gs2Account.Model;
 using Gs2.Unity.Gs2Key.ScriptableObject;
 using Gs2.Unity.UiKit.Core;
-using Gs2.Unity.UiKit.Gs2Account;
 using Gs2.Unity.Util;
+using Gs2ClientHolder = Gs2.Unity.Util.Gs2ClientHolder;
 using Namespace = Gs2.Unity.Gs2Account.ScriptableObject.Namespace;
-using Object = UnityEngine.Object;
 
 namespace Gs2.Unity.UiKit.Sample.Gs2Friend
 {
@@ -67,7 +66,7 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Friend
                     yield break;
                 }
                 
-                self.OnComplete(new Tuple<EzAccount, GameSession>(future3.Result, new GameSession(future6.Result.ToModel())));
+                self.OnComplete(new Tuple<EzAccount, GameSession>(future3.Result, future6.Result));
             }
             return new Gs2InlineFuture<Tuple<EzAccount, GameSession>>(Impl);
         }

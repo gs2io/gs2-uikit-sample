@@ -21,10 +21,9 @@ using System;
 using System.Collections;
 using Gs2.Core.Exception;
 using Gs2.Unity.Gs2Friend.ScriptableObject;
-using Gs2.Unity.UiKit.Core;
 using UnityEngine;
 using UnityEngine.Events;
-using ErrorEvent = Gs2.Unity.UiKit.Core.ErrorEvent;
+using ErrorEvent = Gs2.Unity.Util.ErrorEvent;
 
 namespace Gs2.Unity.UiKit.Sample.Gs2Friend
 {
@@ -116,13 +115,13 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Friend
     
     public partial class ReceiveRequestRandomUser
     {
-        private Gs2ClientHolder _clientHolder;
-        private Gs2GameSessionHolder _gameSessionHolder;
+        private Gs2.Unity.Util.Gs2ClientHolder _clientHolder;
+        private Gs2.Unity.Util.Gs2GameSessionHolder _gameSessionHolder;
 
         public void Awake()
         {
-            _clientHolder = Gs2ClientHolder.Instance;
-            _gameSessionHolder = Gs2GameSessionHolder.Instance;
+            _clientHolder = Gs2.Unity.Util.Gs2ClientHolder.Instance;
+            _gameSessionHolder = Gs2.Unity.Util.Gs2GameSessionHolder.Instance;
         }
     }
 
@@ -167,7 +166,7 @@ namespace Gs2.Unity.UiKit.Sample.Gs2Friend
         [SerializeField]
         internal ErrorEvent onError = new ErrorEvent();
         
-        public event UnityAction<Exception, Func<IEnumerator>> OnError
+        public event UnityAction<Gs2Exception, Func<IEnumerator>> OnError
         {
             add => onError.AddListener(value);
             remove => onError.RemoveListener(value);
